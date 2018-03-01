@@ -182,11 +182,11 @@ void CohortLookup::assignVegetationParams(){
     float dumvegc[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{237.0, 17483, 9000, 3250, 535.69},
     	    { 237.0, 17483, 9000,  4000, 535.69}};//D 
 
-    float dumstrn[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{4.464, 73.25, 29.28, 14.40, 11.134},
-    	    {4.464, 73.25, 29.28,  17.76}};  //D 
+    float dumstrn[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{4.464, 73.25, 29.28, 14.40, 10.689},
+    	    {4.464, 73.25, 29.28,  17.76,10.689}};  //D 
 
-    float dumston[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.186, 3.05, 1.22, 0.600, 3.05},
-    	    { 0.186, 3.05, 1.22, 0.74, 0.186}}; //////////Heather: this is veg labile nitrogen? What is this? (currently set same as tundra)
+    float dumston[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.186, 3.05, 1.22, 0.600, 0.445},
+    	    { 0.186, 3.05, 1.22, 0.74, 0.445}}; //////////Heather: this is veg labile nitrogen? What is this? (currently set same as tundra)
 
 	float dumkra[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{ -8.06e-05, -8.06e-05, -8.06e-05,  -8.06e-05,  -8.06e-05},
 		    { -8.06e-05, -8.06e-05, -8.06e-05,  -8.06e-05,  -8.06e-05}};
