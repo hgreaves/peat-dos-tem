@@ -4,10 +4,10 @@ Test_Siter/griddata/
 Test_Siter/cohort/eq/
 Test_Siter/cohort/sp/
 Test_Siter/cohort/tr/
-Test_Siter/output/restart-sp.nc
+Test_Siter/output/restart-eq.nc
 config/
-tr
-restart
-dynamic
-dynamic
+eq
+lookup
+normal
+initial
 Test-TEM-GUI
