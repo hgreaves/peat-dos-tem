@@ -389,10 +389,10 @@ void CohortLookup::assignRootParams(){
 	// first column for ice, the value will make no difference
 	// data are from tmcrv43d.ecd
 	// and  see ATJackson61996a for rootmass
-	float dumrootza[] = {-4.7210,-4.7210,-4.7210, 0.0, 0.0};  ///////Heather: I have no idea what these are, setting same as black spruce
-	float dumrootzb[] = {4.1060, 4.1060, 4.1060, -2.0875, -2.0875};
-	float dumrootzc[] = {0.3003, 0.3003,0.3003, 2.8977, 2.8977};
-	float dumminrootz[] = {0.3000, 0.3000, 0.3000, 0.8, 0.8 };
+	float dumrootza[] = {-4.7210,-4.7210,-4.7210, 0.0, -4.7210};  ///////Heather: I have no idea what these are, setting same as tundra
+	float dumrootzb[] = {4.1060, 4.1060, 4.1060, -2.0875, 4.1060};
+	float dumrootzc[] = {0.3003, 0.3003,0.3003, 2.8977, 0.3003};
+	float dumminrootz[] = {0.3000, 0.3000, 0.3000, 0.8, 0.3000 };
 
 	float dumrootmass[] = {2.9, 2.9, 1.2, 2.9, 2.9}; //////Heather: No idea what these are either
 	float dumrootbeta[] = {0.943, 0.943, 0.914, 0.943, 0.943 };
@@ -482,7 +482,7 @@ void CohortLookup::assignRootParams(){
 
 void CohortLookup::assignSOCParams(){
 
-  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.40 }; //{0.015, 0.0, 0.035, 0.035};
+  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.10 }; //{0.015, 0.0, 0.035, 0.035};
   	float dum_abvltrr2t[] = {0.5, 0.650,0.705, 0.431, 0.5};
   	float dum_blwltrr2t[] = {0.5, 0.350,0.295, 0.569, 0.5};// from floodplain black spruce and white spruce
 
@@ -496,7 +496,7 @@ void CohortLookup::assignSOCParams(){
 
 void CohortLookup::assignSoilTextureParams(){
 
- 	float dum_mossthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0, 0.0, 0.035, 0.035, 0.21 },{0.0, 0.0, 0.025, 0.035, 0.21 }}; //{{0.0, 0.0, 0.035,  0.035 },{0.0, 0.0, 0.025,  0.035 }};
+ 	float dum_mossthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0, 0.0, 0.035, 0.035, 0.035 },{0.0, 0.0, 0.025, 0.035, 0.035 }}; //{{0.0, 0.0, 0.035,  0.035 },{0.0, 0.0, 0.025,  0.035 }};
  	float dum_fibthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.03, 0.050, 0.050, 0.050, 0.33 },{0.03, 0.05, 0.09, 0.20, 0.33 }};
  	float dum_humthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.93, 0.05, 0.050, 0.095, 0.90 },{0.93, 0.10, 0.10, 0.16, 0.90 }};
 
