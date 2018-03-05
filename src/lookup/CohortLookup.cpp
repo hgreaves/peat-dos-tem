@@ -482,7 +482,7 @@ void CohortLookup::assignRootParams(){
 
 void CohortLookup::assignSOCParams(){
 
-  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.10 }; //{0.015, 0.0, 0.035, 0.035};
+  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.08 }; //{0.015, 0.0, 0.035, 0.035};
   	float dum_abvltrr2t[] = {0.5, 0.650,0.705, 0.431, 0.5};
   	float dum_blwltrr2t[] = {0.5, 0.350,0.295, 0.569, 0.5};// from floodplain black spruce and white spruce
 
