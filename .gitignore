@@ -3,3 +3,4 @@ DOSTEM
 Debug
 *.o
 peat-dos-tem
+Test_Siter/output/*.nc
