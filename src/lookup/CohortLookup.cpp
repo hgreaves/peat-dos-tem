@@ -525,11 +525,11 @@ void CohortLookup::assignSoilTextureParams(){
 	float dum_coefdeepb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.2622, 1.2622, 1.2622, 1.2622, 1.00},
 		                                                {1.0802, 1.0802, 1.0802, 1.0802, 1.00}};
                                                                                                     
-	float dum_coefminea[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.039693, 0.039693, 0.039693, 0.039693, 0.1861},
-		                                                {0.04856, 0.04856, 0.04856, 0.04856, 0.1861}};
+	float dum_coefminea[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.039693, 0.039693, 0.039693, 0.039693, 0.039693},
+		                                                {0.04856, 0.04856, 0.04856, 0.04856, 0.04856}};
                                                                                                     
-	float dum_coefmineb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0667389, 0.0667389, 0.0667389, 0.0667389, 0.7577},
-		                                                {0.06164, 0.06164, 0.06164, 0.06164, 0.7577}};
+	float dum_coefmineb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0667389, 0.0667389, 0.0667389, 0.0667389, 0.0667389},
+		                                                {0.06164, 0.06164, 0.06164, 0.06164, 0.0006164}};
                                                                                                     
     //Yuan: the following parameters are changeable, the default are from
 		// Jenkinson et al, 1977, soil science 123: 298 - 305
