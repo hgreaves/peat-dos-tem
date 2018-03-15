@@ -514,7 +514,7 @@ void CohortLookup::assignSoilTextureParams(){
  	float dum_ltrfalratioh2f[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1,1,1,1,1},{1,1,1,1,1}};
 
 	float dum_coefshlwa[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.01927, 0.01927, 0.01927, 0.01927, 0.0507},
-                                                        {0.01386, 0.01386, 0.01386, 0.01386, 0.0507}};
+                                                        {0.01386, 0.01386, 0.01386, 0.01386, 0.0507}}; // 0.0507
                                                         
 	float dum_coefshlwb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.1247, 1.1247, 1.1247, 1.1247, 1.00},
 		                                                {1.0836, 1.0836, 1.0876, 1.0876, 1.00}};

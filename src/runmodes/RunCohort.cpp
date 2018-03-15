@@ -447,8 +447,8 @@ void RunCohort::runEquilibrium() {
 	cht.dslmodule = true;
 
 	cht.bd->baseline = 1;
-	cht.bd->nfeed = 0;
-	cht.bd->avlnflg = 0;
+	cht.bd->nfeed = 1;
+	cht.bd->avlnflg = 1;
 
 	cht.friderived = true; //When call DSB module (fire), using FRI to determine fire year
 	// and the fire season/size use the FIRST one in the gd.season[]/gd.size[]
