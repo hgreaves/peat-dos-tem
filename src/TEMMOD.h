@@ -24,7 +24,7 @@ const bool REGNMODE = false;
 
 const bool OMONTH = true;
 const bool OYEAR = true;
-#define ODAY   //daily output if needed
+//#define ODAY   //daily output if needed
 const bool OSOILCLM = false; //for output soil climate driver
 #endif
 
