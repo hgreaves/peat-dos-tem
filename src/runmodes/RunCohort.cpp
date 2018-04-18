@@ -153,7 +153,7 @@ int RunCohort::reinit(const int &cid, const int &eqcid, const int &rescid) {
 		return -1;
 	cinputer->getVegetation(cht.cd->vegtype, eqcid);
 	cinputer->getDrainage(cht.cd->drgtype, eqcid);
-	if (cht.cd->vegtype < 0 || cht.cd->vegtype > 4)
+	if (cht.cd->vegtype < 0 || cht.cd->vegtype > 6)
 		return -2;
 	if (cht.cd->drgtype < 0 || cht.cd->drgtype > 1)
 		return -3;
@@ -447,8 +447,8 @@ void RunCohort::runEquilibrium() {
 	cht.dslmodule = true;
 
 	cht.bd->baseline = 1;
-	cht.bd->nfeed = 1;
-	cht.bd->avlnflg = 1;
+	cht.bd->nfeed = 0;
+	cht.bd->avlnflg = 0;
 
 	cht.friderived = true; //When call DSB module (fire), using FRI to determine fire year
 	// and the fire season/size use the FIRST one in the gd.season[]/gd.size[]

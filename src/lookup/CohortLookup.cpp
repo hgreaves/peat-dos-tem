@@ -17,11 +17,11 @@ CohortLookup::CohortLookup(){
 void CohortLookup::assignFirePara(){
 	//I_TUNDRA, I_DF, I_WSF, I_BSF, I_BB
 
-	float dum_burnthickmax[] = {0.1, 0.1, 0.1, 0.127, 0.1};
-	float dum_vegcombust[] = {0.23, 0.23,0.23, 0.23, 0.23};
-	float dum_vegslash[] = {0.76, 0.76,0.76, 0.76, 0.76};
+	float dum_burnthickmax[] = {0.1, 0.1, 0.1, 0.127, 0.1, 0.1};
+	float dum_vegcombust[] = {0.23, 0.23,0.23, 0.23, 0.23, 0.23};
+	float dum_vegslash[] = {0.76, 0.76,0.76, 0.76, 0.76, 0.76};
 
-	float dum_matureage[]={20, 15, 120, 70, 20};
+	float dum_matureage[]={20, 15, 120, 70, 20, 20};
 
 	for (int ic =0; ic<MAX_VEG_TYPE; ic++){
 		burnthick_max[ic] = dum_burnthickmax[ic];
@@ -38,12 +38,14 @@ void CohortLookup::assignSnowPara(){
 	snwdenmax[2] = 250;
 	snwdenmax[3] = 250;// 250 for forest , ATPomeroy71998a
  	snwdenmax[4] = 350;
+ 	snwdenmax[5] = 350;
 
 	snwdennew[0] = 120;
 	snwdennew[1] = 120;
 	snwdennew[2] = 120;
 	snwdennew[3] = 120;
 	snwdennew[4] = 120;
+	snwdennew[5] = 120;
 
 	// from atroesh42001a
 	snwalbmax[0] = 0.8;
@@ -51,12 +53,14 @@ void CohortLookup::assignSnowPara(){
 	snwalbmax[2] = 0.8;
 	snwalbmax[3] = 0.8;
 	snwalbmax[4] = 0.8;
+	snwalbmax[5] = 0.8;
 
 	snwalbmin[0] = 0.4;
 	snwalbmin[1] = 0.4;
 	snwalbmin[2] = 0.4;
 	snwalbmin[3] = 0.4;
 	snwalbmin[4] = 0.4;
+	snwalbmin[5] = 0.4;
 
 };
 
@@ -114,7 +118,7 @@ void CohortLookup::setEnvLAI(){
 	  envlai[3][9]	=1.3;
 	  envlai[3][10] =1.15;
 	  envlai[3][11] =1.1;
-	  //boreal bog 
+	  //boreal intermediate/old bog 
 	  envlai[4][0]	=5.526;
 	  envlai[4][1]	=5.521;
 	  envlai[4][2]	=5.543;
@@ -127,73 +131,86 @@ void CohortLookup::setEnvLAI(){
 	  envlai[4][9]	=5.705;
 	  envlai[4][10] =5.582;
 	  envlai[4][11] =5.527;
+	  //boreal young bog
+	  envlai[5][0]	=5.532;
+	  envlai[5][1]	=5.525;
+	  envlai[5][2]	=5.554;
+	  envlai[5][3]	=5.720;
+	  envlai[5][4]	=5.909;
+	  envlai[5][5]	=5.967;
+	  envlai[5][6]	=6.033;
+	  envlai[5][7]	=6.033;
+	  envlai[5][8]	=5.882;
+	  envlai[5][9]	=5.766;
+	  envlai[5][10] =5.605;
+	  envlai[5][11] =5.533;
 
 };
 
 void CohortLookup::assignVegetationParams(){
 	// first column for ice, the value will make no difference
 	// data are from tveg43d.ecd
-	float dumkc[] = {400.0, 400.0, 400.0, 400.0, 400.0};
-	float dumki[] = {75.0, 75.00, 75.00, 75.0, 75.0};
-	float dumgva[] = {55.3933, 55.3933, 55.3933, 55.3933, 55.3933};
-	float dumtmin[] = {-1.0, -1.0, -1.0, -8.0, -5.0};
-	float dumtoptmin[] = {5.5, 5.5, 5.5, 14.2, 5.5};
-	float dumtoptmax[] = {20.0, 20.0, 20.0, 22.4, 20.0};
-	float dumtmax[] = {35.0, 35.0, 35.0, 29.0, 35.0};
-	float dumraq10a0[] = {2.35665000, 2.35665000, 2.35665000, 2.35665000, 2.35665000}; //2.35665000
-	float dumraq10a1[] = {-0.05307700, -0.05307700, -0.05307700, -0.05307700, -0.05307700};
-	float dumraq10a2[] = {0.00238420, 0.00238420, 0.00238420, 0.00238420, 0.00238420};
-	float dumraq10a3[] = {-0.00004110, -0.00004110, -0.00004110, -0.00004110, -0.00004110};
-	float dumkn1[] = {0.0042, 0.0042, 0.0042, 0.0042, 0.0042};
-	float dumlabncon[] = {0.2, 0.2, 0.2, 0.2, 0.2};
-	float dumleafmxc[] = {200.5, 347.2, 630.3, 268.2, 211.7};    //Yuan: modified 
-	float dumkleafc[] = {1.6662, 1.6662, 1.6662, 1.6662, 1.6662};
-	float dumsla[] = {0.0072, 0.0072, 0.0072, 0.0072, 0.01638};
-	float dumcov[] = {-0.001954, -0.000292, -0.0005673, -0.001571, -0.492}; //yuan 
+	float dumkc[] = {400.0, 400.0, 400.0, 400.0, 400.0, 400.0};
+	float dumki[] = {75.0, 75.00, 75.00, 75.0, 75.0, 75.0};
+	float dumgva[] = {55.3933, 55.3933, 55.3933, 55.3933, 55.3933, 55.3933};
+	float dumtmin[] = {-1.0, -1.0, -1.0, -8.0, -5.0, -5.0};
+	float dumtoptmin[] = {5.5, 5.5, 5.5, 14.2, 5.5, 5.5};
+	float dumtoptmax[] = {20.0, 20.0, 20.0, 22.4, 20.0, 20.0};
+	float dumtmax[] = {35.0, 35.0, 35.0, 29.0, 35.0, 35.0};
+	float dumraq10a0[] = {2.35665, 2.35665, 2.35665, 2.35665, 2.35665, 2.35665}; //2.35665000
+	float dumraq10a1[] = {-0.053077, -0.053077, -0.053077, -0.053077, -0.053077, -0.053077};
+	float dumraq10a2[] = {0.00238420, 0.00238420, 0.00238420, 0.00238420, 0.00238420, 0.00238420};
+	float dumraq10a3[] = {-0.00004110, -0.00004110, -0.00004110, -0.00004110, -0.00004110, -0.00004110};
+	float dumkn1[] = {0.0042, 0.0042, 0.0042, 0.0042, 0.0042, 0.0042};
+	float dumlabncon[] = {0.2, 0.2, 0.2, 0.2, 0.2, 0.2};
+	float dumleafmxc[] = {200.5, 347.2, 630.3, 268.2, 211.7, 276.47};    //Yuan: modified 
+	float dumkleafc[] = {1.6662, 1.6662, 1.6662, 1.6662, 1.6662, 1.6662};
+	float dumsla[] = {0.0072, 0.0072, 0.0072, 0.0072, 0.01638, 0.1638};
+	float dumcov[] = {-0.001954, -0.000292, -0.0005673, -0.001571, -0.492, -0.492}; //yuan 
 
-	float dummaturefoliagemin[] = {0.5, 0.5, 0.5, 0.5, 0.5};
+	float dummaturefoliagemin[] = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
 	//there is a positive feedback between foliage and vegc
 	//so set a minimal value
 	//shuhua Oct. 7, 2008
-	float dumfpcmax[] = {1.00, 1.00, 1.00, 1.00, 1.00};  //yuan
-    float duminitleafmx[] = {1, 1, 1,  1, 1};
+	float dumfpcmax[] = {1.00, 1.00, 1.00, 1.00, 1.00, 1.00};  //yuan
+    float duminitleafmx[] = {1, 1, 1,  1, 1, 1};
     //	float dumc2nmin[] = {55.91, 229.13, 295.08, 216.67 };//be carefull about these two
-    float dumc2nmin[] = {16.89, 229.13, 295.08, 216.67, 16.89};
-    float dumcnmin[] = {0, 0, 0, 0, 0};
+    float dumc2nmin[] = {16.89, 229.13, 295.08, 216.67, 16.89, 16.89};
+    float dumcnmin[] = {0, 0, 0, 0, 0, 0};
     
-    float dumc2na[] = {0, 0, 0, 0, 0};  // c2nmin = c2nb
+    float dumc2na[] = {0, 0, 0, 0, 0, 0};  // c2nmin = c2nb
     //	float dumc2nb[] = {55.91, 229.13, 295.08, 216.67};  //Yuan: modified
-	float dumc2nb[] = {35.16, 229.13, 295.08, 216.67, 35.16};  //Yuan: modified
-	float dumabv2totmass[] = {0.60, 0.70, 0.81, 0.8, 0.560};     //yuan: modified 
+	float dumc2nb[] = {35.16, 229.13, 295.08, 216.67, 35.16, 35.16};  //Yuan: modified
+	float dumabv2totmass[] = {0.60, 0.70, 0.81, 0.8, 0.560, 0.725};     //yuan: modified 
 
-   	float duminitcneven[] = {123.06, 27.66, 164.3, 68.08, 48.113}; //yuan: modified
+   	float duminitcneven[] = {123.06, 27.66, 164.3, 68.08, 48.113, 48.113}; //yuan: modified
 
-   	float dumcmax[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{582.7, 1384.1, 940.3, 713.6, 1969.5},
-   	       {582.7, 1384.1, 940.3, 743.8, 1969.5}};  //D 
+   	float dumcmax[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{582.7, 1384.1, 940.3, 713.6, 1969.5, 2200.0},
+   	       {582.7, 1384.1, 940.3, 743.8, 1969.5, 2200.0}};  //D 
 
-   	float dumnmax[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{2.536, 6.83, 3.85, 3.06, 57.95},
-   	 		{2.536, 6.83, 3.85, 3.06, 57.95}};    //D
+   	float dumnmax[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{2.536, 6.83, 3.85, 3.06, 57.95, 0.2155},
+   	 		{2.536, 6.83, 3.85, 3.06, 57.95, 0.2155}};    //D
 
-    float dumcfall[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.04219, 0.00166, 0.00422, 0.003897, 0.6975},
-    	    {0.04219, 0.00166, 0.00422, 0.003979, 0.6975}};//D
+    float dumcfall[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.04219, 0.00166, 0.00422, 0.003897, 0.6975, 0.046},
+    	    {0.04219, 0.00166, 0.00422, 0.003979, 0.6975, 0.046}};//D
              
-    float dumnfall[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.01120, 0.00757, 0.00800, 0.01017, 0.12955},
-    	    {0.01120, 0.00757, 0.00800, 0.01038, 0.12955}}; //D
+    float dumnfall[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.01120, 0.00757, 0.00800, 0.01017, 0.12955, 0.01},
+    	    {0.01120, 0.00757, 0.00800, 0.01038, 0.12955, 0.01}}; //D
 
-    float dumvegc[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{237.0, 17483, 9000, 3250, 535.69},
-    	    {237.0, 17483, 9000, 4000, 535.69}};//D 
+    float dumvegc[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{237.0, 17483, 9000, 3250, 535.69, 700},
+    	    {237.0, 17483, 9000, 4000, 535.69, 700}};//D 
 
-    float dumstrn[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{4.464, 73.25, 29.28, 14.40, 10.689},
-    	    {4.464, 73.25, 29.28, 17.76, 10.689}};  //D 
+    float dumstrn[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{4.464, 73.25, 29.28, 14.40, 10.689, 13.96},
+    	    {4.464, 73.25, 29.28, 17.76, 10.689, 13.96}};  //D 
 
-    float dumston[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.186, 3.05, 1.22, 0.600, 0.445},
-    	    {0.186, 3.05, 1.22, 0.74, 0.445}}; 
+    float dumston[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.186, 3.05, 1.22, 0.600, 0.445, 0.58},
+    	    {0.186, 3.05, 1.22, 0.74, 0.445, 0.58}}; 
 
-	float dumkra[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{-8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05},
-		    { -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05}};
+	float dumkra[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{-8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05},
+		    { -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05, -8.06e-05}};
 
-  	float dumkrb[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{-4.962, -4.669, -6.25, -5.06, -6.4583},
-  	 		{-4.962, -4.669, -6.25, -5.06, -6.4583}};	 //D
+  	float dumkrb[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{-4.962, -4.669, -6.25, -5.06, -6.4583, -6.4583},
+  	 		{-4.962, -4.669, -6.25, -5.06, -6.4583, -6.4583}};	 //D
 
 	for (int ic =0; ic<MAX_VEG_TYPE; ic++){
 		kc[ic] = dumkc[ic];
@@ -250,38 +267,38 @@ void CohortLookup::assignVegetationParams(){
 
 void CohortLookup::assignLeafParams(){   
 
-	float dumminleaf[] = {0.0, 0.0, 0.5, 0.5, 0.001};
-	float dumaleaf[] = {0.79640, 0.79640, 0.79640, 0.42893, 0.79640};
-	float dumbleaf[] = {0.46635, 0.46635, 0.46635, 0.33295, 0.46635};
-	float dumcleaf[] = {-0.02873, -0.02873, -0.02873, 0.32228, -0.02873};
-	float dumalbvisnir[] = {0.16, 0.19, 0.10, 0.10, 0.10};           //from Beringer et al., 2005  (ATBeringer42005a)
+	float dumminleaf[] = {0.0, 0.0, 0.5, 0.5, 0.001, 0.001};
+	float dumaleaf[] = {0.79640, 0.79640, 0.79640, 0.42893, 0.79640, 0.79640};
+	float dumbleaf[] = {0.46635, 0.46635, 0.46635, 0.33295, 0.46635, 0.46635};
+	float dumcleaf[] = {-0.02873, -0.02873, -0.02873, 0.32228, -0.02873, -0.02873};
+	float dumalbvisnir[] = {0.16, 0.19, 0.10, 0.10, 0.10, 0.10};           //from Beringer et al., 2005  (ATBeringer42005a)
 
     //m1, m2, m3 and m4 used for calculating f(FOLIAGE) in Zhuang et al. (2003)
-	float dumm1[] = {15.206 , 38.57, 28.55, 19.62, 15.206};                 //redone by Yuan (2009):tudra, aspen, ws, dry-bs, wet-bs
-	float dumm2[] = {-0.3197, -0.4509, -0.3641, -0.3999, -0.3197};
-	float dumm3[] = {0.0401, 0.0743, 0.0781, 0.1487, 0.0401};   
-	float dumm4[] = {0.0001, 0.0001, 0.0001, 0.0001, 0.0001};
+	float dumm1[] = {15.206 , 38.57, 28.55, 19.62, 15.206, 15.206};                 //redone by Yuan (2009):tudra, aspen, ws, dry-bs, wet-bs
+	float dumm2[] = {-0.3197, -0.4509, -0.3641, -0.3999, -0.3197, -0.3197};
+	float dumm3[] = {0.0401, 0.0743, 0.0781, 0.1487, 0.0401, 0.0401};   
+	float dumm4[] = {0.0001, 0.0001, 0.0001, 0.0001, 0.0001, 0.0001};
 
 	//boundary layer conductance (projected area basis) m/s
-     float dumgl_bl[] ={0.04, 0.01, 0.08, 0.08, 0.08};
+     float dumgl_bl[] ={0.04, 0.01, 0.08, 0.08, 0.08, 0.08};
 
     // cuticular conductance m/s
-    float dumgl_c[] ={0.00001, 0.00001, 0.00001, 0.00001, 0.00001};
+    float dumgl_c[] ={0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001};
 
     //tundra and white spruce using black spruce
     // from ~/code/biomebgc-4.2/epc
     //float dumer[] ={0.5, 0.7, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
-    float dumer[] ={0.5, 0.5, 0.5, 0.5, 0.5};
+    float dumer[] ={0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
 
-    float dumircoef[] ={0.041, 0.041, 0.041, 0.041, 0.041};
-    float dumiscoef[] ={0.041, 0.041, 0.041, 0.041, 0.041};
-    float dumvpd_open[] ={930, 930, 930, 930, 930};//pa
-    float dumvpd_close[] ={4100, 4100, 4100, 4100, 4100};//pa
-    float dumglmax[] ={0.005, 0.005, 0.003,  0.003, 0.003};//m/s
+    float dumircoef[] ={0.041, 0.041, 0.041, 0.041, 0.041, 0.041};
+    float dumiscoef[] ={0.041, 0.041, 0.041, 0.041, 0.041, 0.041};
+    float dumvpd_open[] ={930, 930, 930, 930, 930, 930};//pa
+    float dumvpd_close[] ={4100, 4100, 4100, 4100, 4100, 4100};//pa
+    float dumglmax[] ={0.005, 0.005, 0.003,  0.003, 0.003, 0.003};//m/s
 
-    float dumall2prj[] ={2.2, 2.0, 2.6, 2.6, 2.2};//m/s
+    float dumall2prj[] ={2.2, 2.0, 2.6, 2.6, 2.2, 2.2};//m/s
 
-    float dumppfd50[] ={75, 75, 75, 75, 75};//
+    float dumppfd50[] ={75, 75, 75, 75, 75, 75};//
 
 	for (int ic =0; ic<MAX_VEG_TYPE; ic++){
 		minleaf[ic] = dumminleaf[ic];
@@ -312,53 +329,53 @@ void CohortLookup::assignLeafParams(){
 void CohortLookup::assignMicrobeParams(){
 	// first column for ice, the value will make no difference
 	// data are from tmcrv43d.ecd
-	float dumrhq10[] = {2.0, 2.0, 2.0, 2.0, 2.0};
-	float dumkn2[] = {0.0042, 0.0042, 0.0042, 0.0042, 0.0042};
-	float dummoistmin[] = {0.0, 0.0, 0.0, 0.0, 0.0};
-	float dummoistopt[] = {0.5, 0.5, 0.5, 0.5, 0.5};
-	float dummoistmax[] = {1.0, 1.0, 1.0, 1.0, 1.0};
-	float dumcnsoil[] = {25.72, 17.20, 21.61, 27.34, 19.34};  //yuan: modified
+	float dumrhq10[] = {2.0, 2.0, 2.0, 2.0, 2.0, 2.0};
+	float dumkn2[] = {0.0042, 0.0042, 0.0042, 0.0042, 0.0042, 0.0042};
+	float dummoistmin[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	float dummoistopt[] = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+	float dummoistmax[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+	float dumcnsoil[] = {25.72, 17.20, 21.61, 27.34, 19.34, 21.01};  //yuan: modified
 
-	float dumlcclnc[] = {215.36, 48.38, 246.0, 83.06, 65.43};   //yuan: modified
+	float dumlcclnc[] = {215.36, 48.38, 246.0, 83.06, 65.43, 65.43};   //yuan: modified
 
-	float dumpropftos[] = {0.2, 0.2, 0.2, 0.2, 0.2};
-	float dumnloss[] = {0, 0, 0, 0, 0};
+	float dumpropftos[] = {0.2, 0.2, 0.2, 0.2, 0.2, 0.2};
+	float dumnloss[] = {0, 0, 0, 0, 0, 0};
 
-	float dumsolc[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{70066.0, 5907.0, 9940.0, 14439, 83329}, //dry
-			                                     {70066.0, 5907.0, 9940.0, 19033, 83329}};//wet
+	float dumsolc[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{70066.0, 5907.0, 9940.0, 14439, 83329, 140747.0}, //dry
+			                                     {70066.0, 5907.0, 9940.0, 19033, 83329, 140747.0}};//wet
 
-	float dumsoln[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{2335, 326, 460.0, 548, 5548},   //dry
-			                                     {2335, 326, 460.0, 671, 5548}};	//wet
+	float dumsoln[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{2335, 326, 460.0, 548, 5548, 6698},   //dry
+			                                     {2335, 326, 460.0, 671, 5548, 6698}};	//wet
 
-	float dumavln[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.4, 1.65, 1.50, 1.00, 9.41},
-			                                     {0.4, 1.65, 1.50, 0.50, 9.41}};
+	float dumavln[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.4, 1.65, 1.50, 1.00, 9.41, 12.29},
+			                                     {0.4, 1.65, 1.50, 0.50, 9.41, 12.29}};
                                                                                       
- 	float dumnup[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.8, 1.267, 0.728, 1.48, 2.75},
-			 		                            {0.8, 1.267, 0.728, 1.48, 2.75}};
+ 	float dumnup[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.8, 1.267, 0.728, 1.48, 2.75, 0.31},
+			 		                            {0.8, 1.267, 0.728, 1.48, 2.75, 0.31}};
 
-    float dumkdcfib[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.003216, 0.003163, 0.01211, 0.003620, 0.003216}, 
-           	                                       {0.003216, 0.003163, 0.01211, 0.007223, 0.003216}};
+    float dumkdcfib[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.003216, 0.003163, 0.01211, 0.003620, 0.003216, 0.003216}, 
+           	                                       {0.003216, 0.003163, 0.01211, 0.007223, 0.003216, 0.003216}};
                                                                                           
-    float dumkdchum[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.001895, 0.000916, 0.003525, 0.000524, 0.001895},
-           	                                       {0.001895, 0.000916, 0.003525, 0.002085, 0.001895}};
+    float dumkdchum[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.001895, 0.000916, 0.003525, 0.000524, 0.001895, 0.001895},
+           	                                       {0.001895, 0.000916, 0.003525, 0.002085, 0.001895, 0.001895}};
                                                                                           
-    float dumkdcmin[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.0000625, 0.008032, 0.001438, 0.002716, 0.0000625},
-           	                                           {0.0000625, 0.008032, 0.001438, 0.000854, 0.0000625}};
+    float dumkdcmin[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.0000625, 0.008032, 0.001438, 0.002716, 0.0000625, 0.0000625},
+           	                                           {0.0000625, 0.008032, 0.001438, 0.000854, 0.0000625, 0.0000625}};
                                                                                                   
-    float dumkdcslow[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.00000625, 0.0008032, 0.0001438, 0.0002716, 0.00000625},
-           	                                           {0.00000625, 0.0008032, 0.0001438, 0.0000854, 0.00000625}};
+    float dumkdcslow[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.00000625, 0.0008032, 0.0001438, 0.0002716, 0.00000625, 0.00000625},
+           	                                           {0.00000625, 0.0008032, 0.0001438, 0.0000854, 0.00000625, 0.00000625}};
 
-    float dumkdcfib_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.003216, 0.003163, 0.01211, 0.003620, 0.003216}, 
-           	                                       {0.003216, 0.003163, 0.01211, 0.007223, 0.003216}};
+    float dumkdcfib_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.003216, 0.003163, 0.01211, 0.003620, 0.003216, 0.003216}, 
+           	                                       {0.003216, 0.003163, 0.01211, 0.007223, 0.003216, 0.003216}};
                                                                                           
-    float dumkdchum_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.001895, 0.000916, 0.003525, 0.000524, 0.001895},
-           	                                       {0.001895, 0.000916, 0.003525, 0.002085, 0.001895}};
+    float dumkdchum_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.001895, 0.000916, 0.003525, 0.000524, 0.001895, 0.001895},
+           	                                       {0.001895, 0.000916, 0.003525, 0.002085, 0.001895, 0.001895}};
                                                                                           
-    float dumkdcmin_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.0000625, 0.008032, 0.001438, 0.002716, 0.0000625},
-           	                                           {0.0000625, 0.008032, 0.001438, 0.000854, 0.0000625}};
+    float dumkdcmin_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.0000625, 0.008032, 0.001438, 0.002716, 0.0000625, 0.0000625},
+           	                                           {0.0000625, 0.008032, 0.001438, 0.000854, 0.0000625, 0.0000625}};
                                                                                                   
-    float dumkdcslow_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.00000625, 0.0008032, 0.0001438, 0.0002716, 0.00000625},
-           	                                           {0.00000625, 0.0008032, 0.0001438, 0.0000854, 0.00000625}};
+    float dumkdcslow_m[MAX_DRG_TYPE][MAX_VEG_TYPE] = {{0.00000625, 0.0008032, 0.0001438, 0.0002716, 0.00000625, 0.00000625},
+           	                                           {0.00000625, 0.0008032, 0.0001438, 0.0000854, 0.00000625, 0.00000625}};
 
 	for (int ic =0; ic<MAX_VEG_TYPE; ic++){
 		rhq10[ic] = dumrhq10[ic];
@@ -397,37 +414,37 @@ void CohortLookup::assignRootParams(){
 	// first column for ice, the value will make no difference
 	// data are from tmcrv43d.ecd
 	// and  see ATJackson61996a for rootmass
-	float dumrootza[] = {-4.7210, -4.7210, -4.7210, 0.0, -4.7210};  
-	float dumrootzb[] = {4.1060, 4.1060, 4.1060, -2.0875, 4.1060};
-	float dumrootzc[] = {0.3003, 0.3003, 0.3003, 2.8977, 0.3003};
-	float dumminrootz[] = {0.3000, 0.3000, 0.3000, 0.8, 0.3000};
+	float dumrootza[] = {-4.7210, -4.7210, -4.7210, 0.0, -4.7210, -4.7210};  
+	float dumrootzb[] = {4.1060, 4.1060, 4.1060, -2.0875, 4.1060, 4.1060};
+	float dumrootzc[] = {0.3003, 0.3003, 0.3003, 2.8977, 0.3003, 0.3003};
+	float dumminrootz[] = {0.3000, 0.3000, 0.3000, 0.8, 0.3000, 0.3000};
 
-	float dumrootmass[] = {2.9, 2.9, 1.2, 2.9, 2.9}; 
-	float dumrootbeta[] = {0.943, 0.943, 0.914, 0.943, 0.943 };
+	float dumrootmass[] = {2.9, 2.9, 1.2, 2.9, 2.9, 2.9}; 
+	float dumrootbeta[] = {0.943, 0.943, 0.914, 0.943, 0.943, 0.943};
 	//I_TUNDRA, I_DF, I_WSF, I_BSF_UF, I_BSF_LF, I_BSF_NS, I_BSF_SS, I_BSF_EWS
 	//second column is for balsam poplar
-    float dum_frprod_010[] =  {15.2, 2.2, 51.95, 26.34, 28.0}; //15.2 15.2  
-    float dum_frprod_1020[] = {20.3, 46.41, 22.42, 54.57, 38.0}; //30.3 20.3
-    float dum_frprod_2030[] = {35.5, 33.11, 11.05, 13.48, 16.0}; //25.5 35.5
-    float dum_frprod_3040[] = {19.0, 11.59, 5.3, 2.64, 12.0}; //19.0 19.0
-    float dum_frprod_4050[] = {10.0, 2.37, 5.34, 0.6, 6.0}; //10.0 10.0
-    float dum_frprod_5060[] = {0.0, 1.7, 2.97, 0.58, 1.0};
-    float dum_frprod_6070[] = {0, 0.87, 0.8, 1.79, 0.0};
-    float dum_frprod_7080[] = {0, 0.87, 0.18, 0.0, 0.0};
-	  float dum_frprod_8090[] = {0, 0.56, 0.0, 0.0, 0.0 };
-    float dum_frprod_90100[]= {0, 0.33, 0.0, 0.0, 0.0 };
+    float dum_frprod_010[] =  {15.2, 2.2, 51.95, 26.34, 28.0, 28.0}; //15.2 15.2  
+    float dum_frprod_1020[] = {20.3, 46.41, 22.42, 54.57, 38.0, 38.0}; //30.3 20.3
+    float dum_frprod_2030[] = {35.5, 33.11, 11.05, 13.48, 16.0, 16.0}; //25.5 35.5
+    float dum_frprod_3040[] = {19.0, 11.59, 5.3, 2.64, 12.0, 12.0}; //19.0 19.0
+    float dum_frprod_4050[] = {10.0, 2.37, 5.34, 0.6, 6.0, 6.0}; //10.0 10.0
+    float dum_frprod_5060[] = {0.0, 1.7, 2.97, 0.58, 1.0, 1.0};
+    float dum_frprod_6070[] = {0, 0.87, 0.8, 1.79, 0.0, 0.0};
+    float dum_frprod_7080[] = {0, 0.87, 0.18, 0.0, 0.0, 0.0};
+	float dum_frprod_8090[] = {0, 0.56, 0.0, 0.0, 0.0, 0.0};
+    float dum_frprod_90100[]= {0, 0.33, 0.0, 0.0, 0.0, 0.0};
 
     //float dum_rootdp4infil[]= {0.10, 0.45, 0.20, 0.25};
-    float dum_rootdp4infil[]= {0.10, 0.45, 0.20, 0.20, 0.20}; //july 7
+    float dum_rootdp4infil[]= {0.10, 0.45, 0.20, 0.20, 0.20, 0.20}; //july 7
 
-    float dum_richardl[]= {0.05, 0.05, 0.10, 0.05, 0.05};
+    float dum_richardl[]= {0.05, 0.05, 0.10, 0.05, 0.05, 0.05};
 
     //the depth of unfrozen soil which has root.
     // for example, for black spruce,
     //if a layer (except moss, since it is assumed that there is no root in moss layer)
     //is unfrozen, or is partial unfrozen, the unfrozen part is greater than the specified value
     //then start photosynthesis
-    float dum_rootdp4gpp[]= {0.05, 0.05, 0.01, 0.05, 0.05};
+    float dum_rootdp4gpp[]= {0.05, 0.05, 0.01, 0.05, 0.05, 0.05};
 
 	for (int ic =0; ic<MAX_VEG_TYPE; ic++){
 		rootza[ic] = dumrootza[ic];
@@ -490,9 +507,9 @@ void CohortLookup::assignRootParams(){
 
 void CohortLookup::assignSOCParams(){
 
-  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.08}; //{0.015, 0.0, 0.035, 0.035};
-  	float dum_abvltrr2t[] = {0.5, 0.650, 0.705, 0.431, 0.5};
-  	float dum_blwltrr2t[] = {0.5, 0.350, 0.295, 0.569, 0.5};// from floodplain black spruce and white spruce
+  	float dum_maxmossthick[] = {0.0, 0.0, 0.035, 0.035, 0.08, 0.10}; //{0.015, 0.0, 0.035, 0.035};
+  	float dum_abvltrr2t[] = {0.5, 0.650, 0.705, 0.431, 0.5, 0.5};
+  	float dum_blwltrr2t[] = {0.5, 0.350, 0.295, 0.569, 0.5, 0.5};// from floodplain black spruce and white spruce
 
 	for (int ic=0; ic<MAX_VEG_TYPE; ic++){
 	   maxmossthick[ic]=dum_maxmossthick[ic];
@@ -504,46 +521,46 @@ void CohortLookup::assignSOCParams(){
 
 void CohortLookup::assignSoilTextureParams(){
 
- 	float dum_mossthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0, 0.0, 0.035, 0.035, 0.035},{0.0, 0.0, 0.025, 0.035, 0.035}}; //{{0.0, 0.0, 0.035,  0.035 },{0.0, 0.0, 0.025,  0.035 }};
- 	float dum_fibthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.03, 0.050, 0.050, 0.050, 0.33},{0.03, 0.05, 0.09, 0.20, 0.33}};
- 	float dum_humthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.93, 0.05, 0.050, 0.095, 0.90},{0.93, 0.10, 0.10, 0.16, 0.90}};
+ 	float dum_mossthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0, 0.0, 0.035, 0.035, 0.035, 0.06},{0.0, 0.0, 0.025, 0.035, 0.035, 0.06}}; //{{0.0, 0.0, 0.035,  0.035 },{0.0, 0.0, 0.025,  0.035 }};
+ 	float dum_fibthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.03, 0.050, 0.050, 0.050, 0.33, 0.645},{0.03, 0.05, 0.09, 0.20, 0.33, 0.645}};
+ 	float dum_humthick[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.93, 0.05, 0.050, 0.095, 0.90, 1.15},{0.93, 0.10, 0.10, 0.16, 0.90, 1.15}};
 
 	//The litter fall into fib, humic and mineral when the original org thicknesses are used
 	//as kdratih2f, it will be input from file in site run mode
- 	float dum_ltrfalratiom2f[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1,1,1,1,1},{1,1,1,1,1}};
- 	float dum_ltrfalratioh2f[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1,1,1,1,1},{1,1,1,1,1}};
+ 	float dum_ltrfalratiom2f[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1,1,1,1,1,1},{1,1,1,1,1,1}};
+ 	float dum_ltrfalratioh2f[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1,1,1,1,1,1},{1,1,1,1,1,1}};
 
-	float dum_coefshlwa[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.01927, 0.01927, 0.01927, 0.01927, 0.0507},
-                                                        {0.01386, 0.01386, 0.01386, 0.01386, 0.0507}}; // 0.0507
+	float dum_coefshlwa[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.01927, 0.01927, 0.01927, 0.01927, 0.0507, 0.0507},
+                                                        {0.01386, 0.01386, 0.01386, 0.01386, 0.0507, 0.0507}}; // 0.0507
                                                         
-	float dum_coefshlwb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.1247, 1.1247, 1.1247, 1.1247, 1.00},
-		                                                {1.0836, 1.0836, 1.0876, 1.0876, 1.00}};
+	float dum_coefshlwb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.1247, 1.1247, 1.1247, 1.1247, 1.00, 1.00},
+		                                                {1.0836, 1.0836, 1.0876, 1.0876, 1.00, 1.00}};
                                                                                                     
-	float dum_coefdeepa[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.02929, 0.02929, 0.02920, 0.02920, 0.05011},
-		                                                {0.03616, 0.03616, 0.03616, 0.03616, 0.05011}};
+	float dum_coefdeepa[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.02929, 0.02929, 0.02920, 0.02920, 0.05011, 0.05011},
+		                                                {0.03616, 0.03616, 0.03616, 0.03616, 0.05011, 0.05011}};
                                                                                                     
-	float dum_coefdeepb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.2622, 1.2622, 1.2622, 1.2622, 1.00},
-		                                                {1.0802, 1.0802, 1.0802, 1.0802, 1.00}};
+	float dum_coefdeepb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{1.2622, 1.2622, 1.2622, 1.2622, 1.00, 1.00},
+		                                                {1.0802, 1.0802, 1.0802, 1.0802, 1.00, 1.00}};
                                                                                                     
-	float dum_coefminea[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.039693, 0.039693, 0.039693, 0.039693, 0.039693},
-		                                                {0.04856, 0.04856, 0.04856, 0.04856, 0.04856}};
+	float dum_coefminea[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.039693, 0.039693, 0.039693, 0.039693, 0.039693, 0.039693},
+		                                                {0.04856, 0.04856, 0.04856, 0.04856, 0.04856, 0.04856}};
                                                                                                     
-	float dum_coefmineb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0667389, 0.0667389, 0.0667389, 0.0667389, 0.0667389},
-		                                                {0.06164, 0.06164, 0.06164, 0.06164, 0.0006164}};
+	float dum_coefmineb[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0667389, 0.0667389, 0.0667389, 0.0667389, 0.0667389, 0.0667389},
+		                                                {0.06164, 0.06164, 0.06164, 0.06164, 0.0006164, 0.0006164}};
                                                                                                     
     //Yuan: the following parameters are changeable, the default are from
 		// Jenkinson et al, 1977, soil science 123: 298 - 305
 		//    when C is respired, 1 C will produce:
 		// 0.076 microbial biomass C, 0.125 physically-resistant C, 0.0035 chemically-resistant C
 		// and the rest are released as CO2
-	float dum_fsoma[MAX_DRG_TYPE][MAX_VEG_TYPE]  =  {{0.3717, 0.3717, 0.3717, 0.3717, 0.371},
-		                                             {0.3717, 0.3717, 0.3717, 0.3717, 0.371}};
-	float dum_fsompr[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.6112, 0.6112, 0.6112, 0.6112, 0.611},
-		                                             {0.6112, 0.6112, 0.6112, 0.6112, 0.611}};
-	float dum_fsomcr[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0171, 0.0171, 0.0171, 0.0171, 0.017},
-		                                             {0.0171, 0.0171, 0.0171, 0.0171, 0.017}};
-	float dum_som2co2[MAX_DRG_TYPE][MAX_VEG_TYPE]=  {{0.2571, 0.2571, 0.2571, 0.2571, 0.346},
-		                                             {0.2571, 0.2571, 0.2571, 0.2571, 0.346}};
+	float dum_fsoma[MAX_DRG_TYPE][MAX_VEG_TYPE]  =  {{0.3717, 0.3717, 0.3717, 0.3717, 0.371, 0.371},
+		                                             {0.3717, 0.3717, 0.3717, 0.3717, 0.371, 0.371}};
+	float dum_fsompr[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.6112, 0.6112, 0.6112, 0.6112, 0.611, 0.611},
+		                                             {0.6112, 0.6112, 0.6112, 0.6112, 0.611, 0.611}};
+	float dum_fsomcr[MAX_DRG_TYPE][MAX_VEG_TYPE] =  {{0.0171, 0.0171, 0.0171, 0.0171, 0.017, 0.017},
+		                                             {0.0171, 0.0171, 0.0171, 0.0171, 0.017, 0.017}};
+	float dum_som2co2[MAX_DRG_TYPE][MAX_VEG_TYPE]=  {{0.2571, 0.2571, 0.2571, 0.2571, 0.346, 0.346},
+		                                             {0.2571, 0.2571, 0.2571, 0.2571, 0.346, 0.346}};
 
  	float dum_minthick[] = {0.1 ,0.1, 0.1, 0.1, 0.2, 0.2, 0.2, 0.3, 0.3, 0.3, 0.5, 1.0, 2.0};
  	int dum_mintype[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
@@ -586,8 +603,8 @@ void CohortLookup::assignHydroPara(){
 	// than upland, when the precipitation are the same.
 
 	//	float dum_psimax[]=  {-1.5e5,-1.5e4 ,-1.5e5 ,-1.5e4  };//from biomebgc
-	float dum_psimax[]=  {-1.5e5, -1.5e6, -1.5e5, -1.5e7, -1.5e7};//
-	float dum_evapmin[]=  {0.08, 0.08, 0.08, 0.08, 0.08};//
+	float dum_psimax[]=  {-1.5e5, -1.5e6, -1.5e5, -1.5e7, -1.5e7, -1.5e7};//
+	float dum_evapmin[]=  {0.08, 0.08, 0.08, 0.08, 0.08, 0.08};//
 	// for baseflow
 
 	float dum_Ds[]=  {0.5, 0.5};//from vic
