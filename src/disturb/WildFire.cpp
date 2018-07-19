@@ -215,53 +215,126 @@ void WildFire::burn(const int & yrind, const bool & friderived) {
 	double burnedsolc = 0.;
 	r_burn2bg_cn = 0.; //initialize
 
+	double olz = 0.0;
+	double olztk = 0.0;
+	double soc = 0.0;
+	double totalc = 0.0;
+
+	cout << "221 burning\n";
+
 	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
 		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
-			totbotdepth += ed->m_sois.dz[il];
-
-			if (totbotdepth <= burndepth) { //remove all the orgc in this layer, consider nitrogen later
+				soc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
+				olz += ed->m_sois.dz[il];
+		}
+	}
+	soc *= 0.30;
+	cout << "soc: " << soc << "\n";
+	cout << "olz: " << olz << "\n";
+	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
+			totalc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
+			cout <<"totalc: " << totalc << "\n";
+			if (totalc < soc){
 				burnedsolc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
+				olztk += ed->m_sois.dz[il];
+				cout << "totalc < soc: burnedsolc: " << burnedsolc << "\n";
+				cout << "olztk: " << olztk << "\n";
 				bd->m_sois.reac[il] = 0.;
 				bd->m_sois.nonc[il] = 0.;
 
 				r_burn2bg_cn += ed->m_sois.rootfrac[il];
 				ed->m_sois.rootfrac[il] = 0.;
 			} else {
-				double partleft = totbotdepth - burndepth;
-				//calculate the left carbon
-				if (partleft < ed->m_sois.dz[il]) {
-					if (ed->m_sois.type[il] == 1) { //shallow organic
-						//double upcumorgc = getCumulativeCarbonBD(burndepth);
-						//double lwcumorgc = getCumulativeCarbonBD(totbotdepth);
-						burnedsolc += (1 - partleft / ed->m_sois.dz[il])
-								* (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
-						bd->m_sois.reac[il] *= partleft / ed->m_sois.dz[il];//0;//lwcumorgc - upcumorgc;
-						bd->m_sois.nonc[il] *= partleft / ed->m_sois.dz[il];//0;//lwcumorgc - upcumorgc;
-
-					} else { //deep organic
-						burnedsolc += (1 - partleft / ed->m_sois.dz[il])
-								* (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
-						bd->m_sois.reac[il] *= partleft / ed->m_sois.dz[il];
-						bd->m_sois.nonc[il] *= partleft / ed->m_sois.dz[il];
-
+				double partleft = totalc - soc;
+				ed->m_sois.dz[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
+				olztk += ed->m_sois.dz[il];
+				if (partleft < (bd->m_sois.reac[il] + bd->m_sois.nonc[il])) {
+					if ((olz - olztk) < 0.02){
+						partleft *= ((0.02 - (olz - olztk))/ed->m_sois.dz[il]);
+						ed->m_sois.dz[il] = 0.02 - (olz - olztk);
 					}
+					cout << "dz: " << ed->m_sois.dz[il] <<"\n";
+					cout << "partleft: " << partleft <<"\n";
+					//calculate the left carbon
+					burnedsolc += (bd->m_sois.reac[il] + bd->m_sois.nonc[il]) - partleft ;
+					cout << "totalc >= soc: burnedsolc: " << burnedsolc << "\n";
+					cout << "olztk: " << olztk << "\n";
+					bd->m_sois.reac[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
+					bd->m_sois.nonc[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
+						
+					r_burn2bg_cn += (1 - (partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il])))
+								* ed->m_sois.rootfrac[il];
+					ed->m_sois.rootfrac[il] *= (partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]));
 
-					r_burn2bg_cn += (1 - partleft / ed->m_sois.dz[il])
-							* ed->m_sois.rootfrac[il];
-					ed->m_sois.rootfrac[il] *= partleft / ed->m_sois.dz[il];
-
+				
 				} else {
-					//nothing can happen here
 					break;
 				}
-			}
 
+			}
+			
 		} else {
 			break;
-
 		}
-
 	}
+
+
+
+
+
+
+
+
+
+	// for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+
+	// 		totbotdepth += ed->m_sois.dz[il];
+
+	// 		if (totbotdepth <= burndepth) { //remove all the orgc in this layer, consider nitrogen later
+	// 			burnedsolc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
+	// 			bd->m_sois.reac[il] = 0.;
+	// 			bd->m_sois.nonc[il] = 0.;
+
+	// 			r_burn2bg_cn += ed->m_sois.rootfrac[il];
+	// 			ed->m_sois.rootfrac[il] = 0.;
+	// 		} else {
+	// 			double partleft = totbotdepth - burndepth;
+	// 			//calculate the left carbon
+	// 			if (partleft < ed->m_sois.dz[il]) {
+	// 				if (ed->m_sois.type[il] == 1) { //shallow organic
+	// 					//double upcumorgc = getCumulativeCarbonBD(burndepth);
+	// 					//double lwcumorgc = getCumulativeCarbonBD(totbotdepth);
+	// 					burnedsolc += (1 - partleft / ed->m_sois.dz[il])
+	// 							* (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
+	// 					bd->m_sois.reac[il] *= partleft / ed->m_sois.dz[il];//0;//lwcumorgc - upcumorgc;
+	// 					bd->m_sois.nonc[il] *= partleft / ed->m_sois.dz[il];//0;//lwcumorgc - upcumorgc;
+
+	// 				} else { //deep organic
+	// 					burnedsolc += (1 - partleft / ed->m_sois.dz[il])
+	// 							* (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
+	// 					bd->m_sois.reac[il] *= partleft / ed->m_sois.dz[il];
+	// 					bd->m_sois.nonc[il] *= partleft / ed->m_sois.dz[il];
+
+	// 				}
+
+	// 				r_burn2bg_cn += (1 - partleft / ed->m_sois.dz[il])
+	// 						* ed->m_sois.rootfrac[il];
+	// 				ed->m_sois.rootfrac[il] *= partleft / ed->m_sois.dz[il];
+
+	// 			} else {
+	// 				//nothing can happen here
+	// 				break;
+	// 			}
+			
+
+	// 		} else {
+	// 			break;
+	// 		}
+
+	// }
+
+
 
 	//soil N burned and returned	
 	double burnedsoln = burnedsolc / chtlu->cnsoil[vegtype];
@@ -276,6 +349,7 @@ void WildFire::burn(const int & yrind, const bool & friderived) {
 		r_burn2ag_cn = onevegseverity;
 		r_dead2ag_cn = 1 - r_burn2ag_cn - r_live2ag_cn;
 	}
+
 	double comb_ag_vegc = bd->m_vegs.c * r_ag2tot_cn * r_burn2ag_cn;
 	double live_ag_vegc = bd->m_vegs.c * r_ag2tot_cn * r_live2ag_cn;
 	double dead_ag_vegc = bd->m_vegs.c * r_ag2tot_cn * r_dead2ag_cn;
@@ -315,6 +389,7 @@ void WildFire::burn(const int & yrind, const bool & friderived) {
 	/// output the biome-atm exchange data during Fire and BGC
 	// for soil organic layers
 	fd->y_soi2a.orgc = burnedsolc;
+	cout << "burnedsolc 377: " << burnedsolc << "\n";
 	fd->y_soi2a.orgn = vola_soln; //nitrogen emission due to burn
 
 	if (fd->y_soi2a.orgn > bd->m_sois.orgn) {
@@ -389,7 +464,8 @@ void WildFire::updateBurnThickness() {
 
 double WildFire::getBurnThick() {
 	double bthick = 0;
-
+	// thermokarst rate of soil c loss
+	double rtk = 0.0;
 	// double maxburn = firpar.burnthick_max;
 	double totorg = ed->m_soid.mossthick + ed->m_soid.shlwthick
 			+ ed->m_soid.deepthick;
@@ -407,9 +483,10 @@ double WildFire::getBurnThick() {
 			} else if (oneseason == 2) { //late season
 				bthick = 0.8 * totorg;
 			}
-
+			rtk = 0.0;
 		} else if (fd->cd->drgtype == 1) {
-			bthick = 0.48 * totorg;
+	//		bthick = 0.48 * totorg;
+			rtk = 0.30;
 		}
 
 	} else {
@@ -419,7 +496,7 @@ double WildFire::getBurnThick() {
 	if (bthick <= 0) {
 		string msg = "burn thickness should be greater than zero";
 		char* msgc = const_cast<char*> (msg.c_str());
-		throw Exception(msgc, I_BURN_ZERO);
+		//throw Exception(msgc, I_BURN_ZERO);
 	}
 
 	if (bthick < ed->m_soid.mossthick) {

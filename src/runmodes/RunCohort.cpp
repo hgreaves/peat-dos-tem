@@ -346,7 +346,7 @@ void RunCohort::run() {
 		resout->outputVariables(cht.cohortcount);
 
 	} catch (Exception &exception) {
-		cout << "problem in run for cohort" << cht.cohortcount << "\n";
+		cout << "problem in run for cohort " << cht.cohortcount << "\n";
 		cht.failed = true;
 		cht.errorid = exception.getErrorCode();
 		exception.mesg();
