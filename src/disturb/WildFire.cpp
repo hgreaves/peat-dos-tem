@@ -208,84 +208,132 @@ void WildFire::burn(const int & yrind, const bool & friderived) {
 
 	}
 
-	// for soil part
+	// for soil part // THERMOKARST VERSION
 	updateBurnThickness();
 	double burndepth = fd->y_soid.burnthick;
+	cout << "Wildfire::burn -- burndepth at start of burn: " << burndepth << "\n";
 	double totbotdepth = 0.;
 	double burnedsolc = 0.;
 	r_burn2bg_cn = 0.; //initialize
 
-	double olz = 0.0;
-	double olztk = 0.0;
-	double soc = 0.0;
-	double totalc = 0.0;
-
-	cout << "221 burning\n";
-
 	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
-		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
-				soc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
-				olz += ed->m_sois.dz[il];
-		}
-	}
-	soc *= 0.30;
-	cout << "soc: " << soc << "\n";
-	cout << "olz: " << olz << "\n";
-	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
-		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
-			totalc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
-			cout <<"totalc: " << totalc << "\n";
-			if (totalc < soc){
-				burnedsolc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
-				olztk += ed->m_sois.dz[il];
-				cout << "totalc < soc: burnedsolc: " << burnedsolc << "\n";
-				cout << "olztk: " << olztk << "\n";
-				bd->m_sois.reac[il] = 0.;
-				bd->m_sois.nonc[il] = 0.;
 
-				r_burn2bg_cn += ed->m_sois.rootfrac[il];
-				ed->m_sois.rootfrac[il] = 0.;
-			} else {
-				double partleft = totalc - soc;
-				ed->m_sois.dz[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
-				olztk += ed->m_sois.dz[il];
-				if (partleft < (bd->m_sois.reac[il] + bd->m_sois.nonc[il])) {
-					if ((olz - olztk) < 0.02){
-						partleft *= ((0.02 - (olz - olztk))/ed->m_sois.dz[il]);
-						ed->m_sois.dz[il] = 0.02 - (olz - olztk);
-					}
-					cout << "dz: " << ed->m_sois.dz[il] <<"\n";
-					cout << "partleft: " << partleft <<"\n";
-					//calculate the left carbon
-					burnedsolc += (bd->m_sois.reac[il] + bd->m_sois.nonc[il]) - partleft ;
-					cout << "totalc >= soc: burnedsolc: " << burnedsolc << "\n";
-					cout << "olztk: " << olztk << "\n";
-					bd->m_sois.reac[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
-					bd->m_sois.nonc[il] *= partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
-						
-					r_burn2bg_cn += (1 - (partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il])))
-								* ed->m_sois.rootfrac[il];
-					ed->m_sois.rootfrac[il] *= (partleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]));
+		totbotdepth += ed->m_sois.dz[il];
 
-				
+		if (totbotdepth <= burndepth) { //remove all the orgc in this layer, consider nitrogen later
+			burnedsolc += bd->m_sois.reac[il] + bd->m_sois.nonc[il];
+			bd->m_sois.reac[il] = 0.;
+			bd->m_sois.nonc[il] = 0.;
+
+			r_burn2bg_cn += ed->m_sois.rootfrac[il];
+			ed->m_sois.rootfrac[il] = 0.;
+		} else {
+			double partleft = totbotdepth - burndepth;
+			//calculate the left carbon
+			if (partleft < ed->m_sois.dz[il]) {
+				if (ed->m_sois.type[il] <= 2) { 
+					burnedsolc += (1 - partleft / ed->m_sois.dz[il])
+							* (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);
+					bd->m_sois.reac[il] *= partleft / ed->m_sois.dz[il];
+					bd->m_sois.nonc[il] *= partleft / ed->m_sois.dz[il];
+
+				r_burn2bg_cn += (1 - partleft / ed->m_sois.dz[il])
+						* ed->m_sois.rootfrac[il];
+				ed->m_sois.rootfrac[il] *= partleft / ed->m_sois.dz[il];
+
 				} else {
+				//nothing can happen here
 					break;
 				}
+		
 
+			} else {
+				break;
 			}
-			
-		} else {
-			break;
+
 		}
 	}
 
 
+// Heather's note: the following preliminary code chunk was based on the original code (following), but was 
+// subsequently split (above) to put the thickness calculation (bthick) into getBurnThick
+// and keep this part as just the carbon calculation,  to better mimic the original code structure
+
+	// // Modified code for thermokarst carbon/layer loss (copied from below and modified)
+	// double solz = 0.0; // overall org layer thickness
+	// double solztk = 0.0; // org layer thickness lost to thermokarst 
+	// double solc = 0.0;  // overall org layer carbon 
+	// double cumc = 0.0;  // cumulative org layer carbon (while progressing through loop)
+
+	// for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+	// 	if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
+	// 			solc += bd->m_sois.reac[il] + bd->m_sois.nonc[il]; // retrieve total org soil carbon
+	// 			solz += ed->m_sois.dz[il]; // retrieve total org soil depth
+	// 	}
+	// }
+	// cout << "Total org layer carbon (solc before tk): " << solc << "\n";
+
+	// double solctk = solc * 0.30; // org layer carbon to be lost to thermokarst
+	
+	// cout << "Org layer carbon to be lost to tk (solctk): " << solctk << "\n";
+	// cout << "Total org layer depth (solz): " << solz << "\n";
+
+	// for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+	// 	if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
+	// 		// retrieve and remove carbon to be lost from org layer soils to thermokarst
+	// 		cumc += bd->m_sois.reac[il] + bd->m_sois.nonc[il]; //accumulate soil carbon
+	// 		cout <<"cumc: " << cumc << "\n";
+	// 		if (cumc < solctk){
+	// 			burnedsolc += bd->m_sois.reac[il] + bd->m_sois.nonc[il]; //add layer carbon to lost carbon
+	// 			solztk += ed->m_sois.dz[il]; // add layer depth to lost depth
+				
+	// 			cout << "cumc < solc: burnedsolc: " << burnedsolc << "\n";
+	// 			cout << "solztk: " << solztk << "\n";
+				
+	// 			bd->m_sois.reac[il] = 0.; // set layer carbon to zero
+	// 			bd->m_sois.nonc[il] = 0.;
+
+	// 			cout << "r_burn2bg_cn: " << r_burn2bg_cn << "\n"; 
+	// 			r_burn2bg_cn += ed->m_sois.rootfrac[il]; // add layer roots to lost carbon (?) and set to zero
+	// 			ed->m_sois.rootfrac[il] = 0.;
+	// 		} else {
+	// 			double cleft = cumc - solctk; // carbon remaining in layer
+	// 			cout << "Partial layer reached; cleft: "<< cleft << "\n";
+	// 			ed->m_sois.dz[il] *= cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]); // reduce thickness proportionately
+	// 			solztk += ed->m_sois.dz[il]; // add partial thickness to lost depth
+				
+	// 			if (cleft < (bd->m_sois.reac[il] + bd->m_sois.nonc[il])) {
+	// 				if ((solz - solztk) < 0.02){
+	// 					cleft *= ((0.02 - (solz - solztk))/ed->m_sois.dz[il]);
+	// 					ed->m_sois.dz[il] = 0.02 - (solz - solztk);
+	// 				}
+	// 				cout << "dz: " << ed->m_sois.dz[il] <<"\n";
+	// 				cout << "cleft: " << cleft <<"\n";
+	// 				//calculate the left carbon
+	// 				burnedsolc += (bd->m_sois.reac[il] + bd->m_sois.nonc[il]) - cleft ;
+	// 				cout << "cumc >= solc: burnedsolc: " << burnedsolc << "\n";
+	// 				cout << "solztk: " << solztk << "\n";
+	// 				bd->m_sois.reac[il] *= cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
+	// 				bd->m_sois.nonc[il] *= cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]);//0;//lwcumorgc - upcumorgc;
+						
+	// 				r_burn2bg_cn += (1 - (cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il])))
+	// 							* ed->m_sois.rootfrac[il];
+	// 				ed->m_sois.rootfrac[il] *= (cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]));
+
+				
+	// 			} else {
+	// 				break;
+	// 			}
+
+	// 		}
+			
+	// 	} else {
+	// 		break;
+	// 	}
+	// }
 
 
-
-
-
-
+/// ORIGINAL VERSION:
 
 	// for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
 
@@ -333,8 +381,6 @@ void WildFire::burn(const int & yrind, const bool & friderived) {
 	// 		}
 
 	// }
-
-
 
 	//soil N burned and returned	
 	double burnedsoln = burnedsolc / chtlu->cnsoil[vegtype];
@@ -442,71 +488,135 @@ void WildFire::updateBurnThickness() {
 	///Rule 2: should be less than the burn thickness max (Cohort Related)
 	///Rule 3: should be less than the water table depth
 
-	double totorg = 0.;
-	for (int i = 0; i < ed->m_soid.actual_num_soil; i++) {
-		if (ed->m_sois.type[i] <= 2 && ed->m_soid.allvwc[i] <= VSMburn) { //Yuan: VSM constrained burn thickness
-			totorg += ed->m_sois.dz[i];
-		} else {
-			break;
-		}
+	// Heather says: remove constraint to test thermokarst, replace with standard calculation of totorg
+	// double totorg = 0.;
 
-	}
+	// for (int i = 0; i < ed->m_soid.actual_num_soil; i++) {
+		
+	// 	if (ed->m_sois.type[i] <= 2 && ed->m_soid.allvwc[i] <= VSMburn) { //Yuan: VSM constrained burn thickness
+	// 		totorg += ed->m_sois.dz[i];
+	// 	} else {
+	// 		break;
+	// 	}
 
+	// }
+
+	double totorg = ed->m_soid.mossthick + ed->m_soid.shlwthick
+			+ ed->m_soid.deepthick;
+	
 	bdepth = getBurnThick();
 	if (bdepth > totorg) {
 		bdepth = totorg;
 	} //Yuan:
 
 	fd->y_soid.burnthick = bdepth;
-
+	cout << "bdepth (bthick) at the end of updateBurnThickness: " << bdepth << "\n";
 }
 ;
 
 double WildFire::getBurnThick() {
-	double bthick = 0;
-	// thermokarst rate of soil c loss
-	double rtk = 0.0;
+	cout << "getBurnThick: \n";
+	double bthick = 0; // this is currently the thickness lost to thermokarst
+	double rtk = 0.30; // fraction of soil c loss to thermokarst
 	// double maxburn = firpar.burnthick_max;
 	double totorg = ed->m_soid.mossthick + ed->m_soid.shlwthick
 			+ ed->m_soid.deepthick;
 
-	// currently use half of the total organic
-	if (!fd->useseverity) {
-		if (fd->cd->drgtype == 0) {
-			if (oneseason == 0 || oneseason == 1 || oneseason == 3) { //Yuan: bug here? (fireseason: 0, 1, 2, 3)
-			//     			if(onesize<1){                     //Yuan: bug here? (firesize: 0, 1, 2, 3)
-				if (onesize <= 1) {
-					bthick = 0.54 * totorg;
-				} else {
-					bthick = 0.69 * totorg;
-				}
-			} else if (oneseason == 2) { //late season
-				bthick = 0.8 * totorg;
-			}
-			rtk = 0.0;
-		} else if (fd->cd->drgtype == 1) {
-	//		bthick = 0.48 * totorg;
-			rtk = 0.30;
-		}
+	double soldz = 0.0; // overall org layer thickness
+	double solc = 0.0;  // overall org layer carbon 
+	double cumc = 0.0;  // cumulative org layer carbon (while progressing through loop)
+	double solctk = 0.0; // how much org layer c is lost (just to check against target c loss)
 
-	} else {
-		bthick = onesoiseverity * totorg;
+	// Get total sol carbon and thickness (we already have thickness with totorg... whatever.)
+	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
+				solc += bd->m_sois.reac[il] + bd->m_sois.nonc[il]; // retrieve total org soil carbon
+				soldz += ed->m_sois.dz[il]; // retrieve total org soil depth
+		}
+	}
+	cout << "Total org layer thickness (totorg): " << totorg << "\n";
+	cout << "Total org layer thickness (soldz): " << soldz << "\n";
+	cout << "Total org layer carbon (solc before tk): " << solc << "\n";
+	
+	double solctk_target = solc * rtk; // org layer carbon to be lost to thermokarst
+	
+	cout << "Total c loss target (solctk_target): " << solctk_target << "\n";
+
+	for (int il = 0; il < ed->m_soid.actual_num_soil; il++) {
+		if (ed->m_sois.type[il] <= 2) { //moss is zero, shlw peat is 1 and deep org is 2
+			// retrieve carbon to be lost from org layer soils to thermokarst and convert to burn-like thickness
+			cumc += bd->m_sois.reac[il] + bd->m_sois.nonc[il]; //accumulate soil carbon
+			cout << "Layer: " << il <<" Accumulated soil c so far (cumc): " << cumc << "\n";
+			if (cumc < solctk_target){
+				bthick += ed->m_sois.dz[il]; // add layer depth to lost depth
+				cout << "bthick: " << bthick << "\n";
+				
+			} else {
+				double cleft = cumc - solctk_target; // carbon that will remain in layer
+				cout << "Partial layer reached; cleft: " << cleft << "\n";
+					
+				if (cleft < (bd->m_sois.reac[il] + bd->m_sois.nonc[il])){
+					double dzlost = ed->m_sois.dz[il] * (1 - (cleft / (bd->m_sois.reac[il] + bd->m_sois.nonc[il]))); 
+					cout << "dz of partial layer: " << ed->m_sois.dz[il] << "\n";
+					cout << "dzlost from partial layer: " << dzlost << "\n";
+					bthick += dzlost; // add partial thickness to lost depth
+					cout << "Total bthick: " << bthick << "\n";
+
+					solctk = cumc - (bd->m_sois.reac[il] + bd->m_sois.nonc[il]) + (bd->m_sois.reac[il] + bd->m_sois.nonc[il]) * (dzlost / ed->m_sois.dz[il]);
+				} else {
+					break;
+				}
+			}
+			
+		} else {
+			break;
+		}
 	}
 
+	cout << "getBurnThick Check: Target C loss: " << solctk_target << ", Actual C loss: " << solctk << "\n";
+	
+	// Commented out for thermokarst
+	// // currently use half of the total organic
+	// if (!fd->useseverity) {
+	// 	if (fd->cd->drgtype == 0) {
+	// 		if (oneseason == 0 || oneseason == 1 || oneseason == 3) { //Yuan: bug here? (fireseason: 0, 1, 2, 3)
+	// 		//     			if(onesize<1){                     //Yuan: bug here? (firesize: 0, 1, 2, 3)
+	// 			if (onesize <= 1) {
+	// 				bthick = 0.54 * totorg;
+	// 			} else {
+	// 				bthick = 0.69 * totorg;
+	// 			}
+	// 		} else if (oneseason == 2) { //late season
+	// 			bthick = 0.8 * totorg;
+	// 		}
+	// 		rtk = 0.0;
+	// 	} else if (fd->cd->drgtype == 1) {
+	// //		bthick = 0.48 * totorg;
+	// 		rtk = 0.30;
+	// 	}
+
+	// } else {
+	// 	bthick = onesoiseverity * totorg;
+	// }
+
+	cout << "bthick @ 593 after modified loop 593: " << bthick << "\n";
 	if (bthick <= 0) {
+		cout << "burn thickness: " << bthick << "\n";
 		string msg = "burn thickness should be greater than zero";
 		char* msgc = const_cast<char*> (msg.c_str());
-		//throw Exception(msgc, I_BURN_ZERO);
+		throw Exception(msgc, I_BURN_ZERO);
 	}
-
+	cout << "bthick before moss check: " << bthick << "\n";
+	cout << "mossthick: " << ed->m_soid.mossthick << "\n";
 	if (bthick < ed->m_soid.mossthick) {
 		bthick = ed->m_soid.mossthick;
 	}
-
+ 	cout << "bthick after moss check: " << bthick << "\n";
+ 	cout << "totorg @ 605: " << totorg << "\n";
 	if (totorg - bthick < 0.02) { //there are at least 2 cm humic orgnanic left
 		bthick = totorg - 0.02;
 	}
-
+	cout << "bthick at end of getBurnThick: " << bthick << "\n";
 	return bthick;
 }
 ;
