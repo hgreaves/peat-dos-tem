@@ -250,7 +250,7 @@ void Peat::initShlwThicknesses(const double & thickness) {
    
     shlwnum = 1;
     
-    if (thickness == 0.03) { //Yuan: always allow at least ONE shlwnum //Y.Mi, increase number of layers
+    if (thickness <= 0.03) { //Yuan: always allow at least ONE shlwnum //Y.Mi, increase number of layers
         shlwdza[0] = 0.03;
         shlwdza[1] = -1;
         shlwdza[2] = -1;

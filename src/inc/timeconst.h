@@ -33,7 +33,7 @@
 //   const int END_SC_YR = 2099;
 
 
-    const int MAX_EQ_YR = 10;  // 20000 maximum number of years for equilibrium run
+    const int MAX_EQ_YR = 1000;  // 20000 maximum number of years for equilibrium run
 	const int MAX_SP_YR = 250;    // 900 maximum number of years of spinup run;
 
     const int BEG_TR_YR = 1601;
